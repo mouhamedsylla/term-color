@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"term-color/color"
+	color "github.com/mouhamedsylla/term-color"
 )
 
 func main() {
