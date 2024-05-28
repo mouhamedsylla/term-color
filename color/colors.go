@@ -17,9 +17,8 @@ type Colors struct {
 	Underline string
 }
 
-func Color(text string) *Colors {
+func Color() *Colors {
 	return &Colors{
-		text:      text,
 		Black:     "\033[0;30m",
 		Red:       "\033[0;31m",
 		Green:     "\033[0;32m",

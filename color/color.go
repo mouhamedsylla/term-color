@@ -21,6 +21,11 @@ func (color *Colors) SetUnderline() *Colors {
 	return color
 }
 
+func (color *Colors) SetText(text string) *Colors {
+	color.text = text
+	return color
+}
+
 
 func (color *Colors) HEX_to_ANSI(hex string) string {
 	r := []rune(hex[1:])
@@ -36,17 +41,18 @@ func (color *Colors) HEX_to_ANSI(hex string) string {
 		}
 		pos += 2
 	}
+	Ansi_Format = "\033[38;2;" + Ansi_Format
 	return Ansi_Format
 }
 
-func RGB_to_ANSI(rgb string) (string, error) {
+func (color *Colors) RGB_to_ANSI(rgb string) (string, error) {
 	rgb = rgb[4 : len(rgb)-1]
 	tabRGB := strings.Split(strings.TrimSpace(rgb), ",")
 	if IsValide_RGB(tabRGB) {
 		return "", errors.New("invalid RGB code")
 	}
 	m := strings.Fields(tabRGB[0] + ";" + tabRGB[1] + ";" + tabRGB[2] + "m")
-	Ansi_Format := strings.Join(m, "")
+	Ansi_Format := "\033[38;2;" + strings.Join(m, "")
 	return Ansi_Format, nil
 }
 
@@ -65,19 +71,25 @@ func (clr *Colors) Colorize(color string) string{
 	return clr.text
 }
 
+func (color *Colors) ColorTextPattern(textPattern string, colorCode string) {
+	textColored := colorCode + textPattern + color.Reset
+	color.text = strings.ReplaceAll(color.text, textPattern, textColored)
+}
+
+
 func (color *Colors) HexCustom(hexCode string) *Colors {
 	color.custom = color.HEX_to_ANSI(hexCode)
-	color.text = "\033[38;2;" + color.custom + color.text + color.Reset
+	color.text = color.custom + color.text + color.Reset
 	return color
 }
 
 func (color *Colors) RGBCustom(rgbCode string) *Colors {
-	custom, err := RGB_to_ANSI(rgbCode)
+	custom, err := color.RGB_to_ANSI(rgbCode)
 	if err != nil {
 		return color
 	}
 	color.custom = custom
-	color.text = "\033[38;2;" + color.custom + color.text + color.Reset
+	color.text = color.custom + color.text + color.Reset
 	return color
 }
 
